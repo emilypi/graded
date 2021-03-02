@@ -13,6 +13,7 @@
 -- This module contains definitions for grade semigroups, monoids,
 -- and semigroups.
 --
+
 module Data.Functor.Graded
 ( -- * Graded semigroups
   GradedSemigroup(..)
@@ -28,17 +29,25 @@ import Data.Group
 import Data.Map (Map)
 import qualified Data.Map as M
 import Data.Sequence (Seq)
+import Data.Foldable.WithIndex
+import Data.Monoid
 
 -- -------------------------------------------------------------------- --
 -- Graded semigroups
 
 class GradedSemigroup i f where
   iappend :: Semigroup g => i -> g -> f g -> f g
-  default iappend :: (Eq i, FunctorWithIndex i f, Semigroup g) => i -> g -> f g -> f g
+  default iappend
+    :: (Eq i, FunctorWithIndex i f, Semigroup g) => i -> g -> f g -> f g
   iappend i h = imap go where
     go j g
       | i == j = g <> h
       | otherwise = g
+
+  degree :: Eq g => g -> f g -> Maybe i
+  default degree
+    :: (Eq g, FoldableWithIndex i f) => g -> f g -> Maybe i
+  degree g = getFirst . ifoldMap (\i h -> if g == h then First (Just i) else mempty)
   {-# inline iappend #-}
 
 instance Ord k => GradedSemigroup k (Map k) where
@@ -67,7 +76,8 @@ instance Ord k => GradedMonoid k (Map k)
 
 class GradedMonoid i f => GradedGroup i f where
   iinvert :: Group g => i -> f g -> f g
-  default iinvert :: (Eq i, FunctorWithIndex i f, Group g) => i -> f g -> f g
+  default iinvert
+    :: (Eq i, FunctorWithIndex i f, Group g) => i -> f g -> f g
   iinvert i = imap go where
     go j g
       | i == j = invert g
