@@ -37,7 +37,7 @@ import qualified Data.IntMap as IM
 -- Graded semigroups
 
 -- | A graded semigroup is a semigroup that can be decomposed into a
--- direct sum \/ S = ⨁ᵢ Sᵢ \/ where each \/ Sᵢ \/ is a semigroup itself.
+-- direct sum \( S = ⨁ᵢ Sᵢ \) where each \( Sᵢ \) is a semigroup itself.
 --
 -- This structure presents two opportunities for semigroup structures:
 --
@@ -74,7 +74,7 @@ class GradedSemigroup i f where
   -- | Given an element of a semigroup, produce its corresponding
   -- degree in the graded semigroup.
   --
-  -- /Note:/ In general, this is an / O(n) / operation.
+  -- /Note:/ In general, this is an \( O(n) \) operation.
   --
   degree :: Eq g => g -> f g -> Maybe i
   default degree
