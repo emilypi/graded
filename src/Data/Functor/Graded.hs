@@ -2,6 +2,7 @@
 {-# LANGUAGE DefaultSignatures #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE AllowAmbiguousTypes #-}
 -- |
 -- Module       : Data.Functor.Graded
 -- Copyright    : (c) 2021 Emily Pillmore
@@ -13,7 +14,6 @@
 -- This module contains definitions for grade semigroups, monoids,
 -- and semigroups.
 --
-
 module Data.Functor.Graded
 ( -- * Graded semigroups
   GradedSemigroup(..)
@@ -31,31 +31,52 @@ import qualified Data.Map as M
 import Data.Sequence (Seq)
 import Data.Foldable.WithIndex
 import Data.Monoid
+import Data.IntMap
+import qualified Data.IntMap as IM
 
 -- -------------------------------------------------------------------- --
 -- Graded semigroups
 
 class GradedSemigroup i f where
-  iappend :: Semigroup g => i -> g -> f g -> f g
-  default iappend
+  iupdate :: Semigroup g => i -> g -> f g -> f g
+  default iupdate
     :: (Eq i, FunctorWithIndex i f, Semigroup g) => i -> g -> f g -> f g
-  iappend i h = imap go where
+  iupdate i h = imap go where
     go j g
       | i == j = g <> h
       | otherwise = g
+  {-# inline iupdate #-}
+
+  iappend :: Semigroup g => f g -> f g -> f g
 
   degree :: Eq g => g -> f g -> Maybe i
   default degree
     :: (Eq g, FoldableWithIndex i f) => g -> f g -> Maybe i
-  degree g = getFirst . ifoldMap (\i h -> if g == h then First (Just i) else mempty)
-  {-# inline iappend #-}
+  degree g = getFirst . ifoldMap go where
+    go i h
+      | g == h = First (Just i)
+      | otherwise = mempty
+  {-# inline degree #-}
 
 instance Ord k => GradedSemigroup k (Map k) where
-  iappend = M.insertWith (<>)
+  iappend = M.unionWith (<>)
+  iupdate = M.insertWith (<>)
   {-# inline iappend #-}
 
-instance GradedSemigroup Int []
-instance GradedSemigroup Int Seq
+instance GradedSemigroup Int IntMap where
+  iappend = IM.unionWith (<>)
+  iupdate = IM.insertWith (<>)
+  {-# inline iappend #-}
+
+instance GradedSemigroup Int [] where
+  iappend = go
+    where
+      go as [] = as
+      go [] bs = bs
+      go (a:as) (b:bs) = (a <> b):go as bs
+
+instance GradedSemigroup Int Seq where
+  iappend = undefined
 
 -- -------------------------------------------------------------------- --
 -- Graded monoids
