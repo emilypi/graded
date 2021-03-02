@@ -18,9 +18,10 @@
 --
 -- This structure presents two opportunities for algebraic manipulation:
 --
---   1. If the indexing set is a semigroup (monoid, group etc.) with respect to
---      some operation itself, then the set can be appended indexing-set wise
---      (e.g. map unions over @k@ - keys implicitly form a list, list appends using integer sums).
+--   1. If the indexing set is a semigroup (resp. monoid, group etc.)
+--      with respect to some operation, then the set can be appended
+--      indexing-set wise (e.g. map unions over @k@ - keys implicitly
+--      form a list, list appends using integer sums).
 --   2. Using the direct sum structure of the semigroup to append at the
 --      indices (e.g. @unionWith@ operations).
 --
