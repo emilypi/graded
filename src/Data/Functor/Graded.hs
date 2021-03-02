@@ -1,6 +1,4 @@
-{-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE DefaultSignatures #-}
-{-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE AllowAmbiguousTypes #-}
 -- |
@@ -12,8 +10,9 @@
 -- Portability  : non-portable
 --
 -- This module contains definitions for grade semigroups, monoids,
--- and semigroups.
+-- and groups.
 --
+{-# LANGUAGE FlexibleInstances #-}
 module Data.Functor.Graded
 ( -- * Graded semigroups
   GradedSemigroup(..)
