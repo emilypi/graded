@@ -36,6 +36,23 @@ import qualified Data.IntMap as IM
 -- -------------------------------------------------------------------- --
 -- Graded semigroups
 
+-- | A graded semigroup is a semigroup that can be decomposed into a
+-- direct sum \/ S = ⨁ᵢ Sᵢ \/ where each \/ Sᵢ \/ is a semigroup itself.
+--
+-- This structure presents two opportunities for semigroup structures:
+--
+--   1. If the indexing set is a semigroup with respect to some operation
+--      itself, then the set can be appended indexing-set wise (e.g.:
+--      map unions over @k@, list appends using integer sums).
+--   2. Using the direct sum structure of the semigroup to append at the
+--      indices (e.g. @unionWith@ operations).
+--
+-- In addition, every graded algebra should be able to take a value
+-- and produce its corresponding degree, or fibre of the map `S -> I`,
+-- which is its index. In Haskell, since indexing sets are discrete,
+-- this amounts to locating the discrete index for a particular value.
+-- Canonically, we choose the first we see.
+--
 class GradedSemigroup i f where
   -- | Append an element of a semegroup to the value
   -- at the provided index.
