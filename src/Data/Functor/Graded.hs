@@ -37,6 +37,9 @@ import qualified Data.IntMap as IM
 -- Graded semigroups
 
 class GradedSemigroup i f where
+  -- | Append an element of a semegroup to the value
+  -- at the provided index.
+  --
   iupdate :: Semigroup g => i -> g -> f g -> f g
   default iupdate
     :: (Eq i, FunctorWithIndex i f, Semigroup g) => i -> g -> f g -> f g
@@ -46,8 +49,16 @@ class GradedSemigroup i f where
       | otherwise = g
   {-# inline iupdate #-}
 
+  -- | Combine two graded semigroups, appending at common
+  -- degrees in the sum
+  --
   iappend :: Semigroup g => f g -> f g -> f g
 
+  -- | Given an element of a semigroup, produce its corresponding
+  -- degree in the graded semigroup.
+  --
+  -- /Note:/ In general, this is an / O(n) / operation.
+  --
   degree :: Eq g => g -> f g -> Maybe i
   default degree
     :: (Eq g, FoldableWithIndex i f) => g -> f g -> Maybe i
@@ -81,6 +92,8 @@ instance GradedSemigroup Int Seq where
 -- Graded monoids
 
 class GradedSemigroup i f => GradedMonoid i f where
+  -- | Insert a unital monoid value at the supplied index.
+  --
   imempty :: Monoid g => i -> f g -> f g
   default imempty :: (Monoid g, Eq i) => i -> f g -> f g
   imempty _ = id
@@ -95,6 +108,8 @@ instance Ord k => GradedMonoid k (Map k)
 -- Graded monoids
 
 class GradedMonoid i f => GradedGroup i f where
+  -- | Invert a group value at the supplied index
+  --
   iinvert :: Group g => i -> f g -> f g
   default iinvert
     :: (Eq i, FunctorWithIndex i f, Group g) => i -> f g -> f g
