@@ -26,7 +26,7 @@
 --      indices (e.g. @unionWith@ operations).
 --
 -- In addition, every graded algebra should be able to take a value
--- and produce its corresponding degree, or fibre of the map `S -> I`,
+-- and produce its corresponding degree, or fibre of the map \( S \rightarrow I \),
 -- which is its index. In Haskell, since indexing sets are discrete,
 -- this amounts to locating the discrete index for a particular value.
 -- Canonically, we choose the first we see.
